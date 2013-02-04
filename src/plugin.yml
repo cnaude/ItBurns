@@ -1,0 +1,9 @@
+name: ItBurns
+version: 0.0.1
+description: Randomly drop player heads as trophies
+author: cnaude
+main: me.cnaude.plugin.ItBurns.IBMain
+permissions:
+  'itburns.burn':
+    description: Players with this will burn if they try to destroy a protected block.
+    default: true
