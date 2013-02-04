@@ -1,6 +1,6 @@
 name: ItBurns
 version: 0.0.1
-description: Randomly drop player heads as trophies
+description: Burn players that try to break protected blocks.
 author: cnaude
 main: me.cnaude.plugin.ItBurns.IBMain
 permissions:
