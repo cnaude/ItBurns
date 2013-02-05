@@ -1,5 +1,5 @@
 name: ItBurns
-version: 0.0.1
+version: 0.0.4
 description: Burn players that try to break protected blocks.
 author: cnaude
 main: me.cnaude.plugin.ItBurns.IBMain
@@ -7,3 +7,10 @@ permissions:
   'itburns.burn':
     description: Players with this will burn if they try to destroy a protected block.
     default: true
+  'itburns.reload':
+    description: Allows player to reload the config.
+    default: op
+commands:
+    itburns:
+        description: Reload the config.
+        usage: /itburns reload
