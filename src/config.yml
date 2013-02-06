@@ -1,11 +1,17 @@
+# Burn duration ticks (100 = 5 seconds)
 burn-duration: 100
-debug-enabled: false
+# Protected events that trigger burning
 burn-events:
   break: true
   place: false
+# Set to true to enable ignore list
 ignore-blocks: false
+# List of items to exclude from burning (ID or name)
 ignore-list:
   - LONG_GRASS
+# Custom messages (Accepts colorcodes)
 custom-messages:
   break: ''
   place: ''
+# Nothing to see here
+debug-enabled: false
