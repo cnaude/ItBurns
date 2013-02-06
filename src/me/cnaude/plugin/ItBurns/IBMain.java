@@ -36,7 +36,10 @@ public class IBMain extends JavaPlugin implements Listener {
     private static boolean burnOnBreak = false;
     private static boolean burnOnPlace = false;
     private static boolean ignoreBlocks = false;
-    private List<String> ignoreList = new ArrayList<String>();
+    private static List<String> ignoreList = new ArrayList<String>();
+    private static String breakMsg = "";
+    private static String placeMsg = "";
+    
 
     @Override
     public void onEnable() {
@@ -74,6 +77,9 @@ public class IBMain extends JavaPlugin implements Listener {
                 if (event.isCancelled() && player.hasPermission("itburns.burn")) {
                     logDebug("Burning player! " + player.getName());
                     player.setFireTicks(burnDuration);
+                    if (!breakMsg.isEmpty()) {
+                        player.sendMessage(breakMsg);
+                    }
                 }
             } else {
                 logDebug("BlockBreakEvent: Player is null");
@@ -93,6 +99,9 @@ public class IBMain extends JavaPlugin implements Listener {
                 if (event.isCancelled() && player.hasPermission("itburns.burn")) {
                     logDebug("Burning player! " + player.getName());
                     player.setFireTicks(burnDuration);
+                    if (!placeMsg.isEmpty()) {
+                        player.sendMessage(placeMsg);
+                    }
                 }
             } else {
                 logDebug("BlockBreakEvent: Player is null");
@@ -128,6 +137,8 @@ public class IBMain extends JavaPlugin implements Listener {
             ignoreList.add(s.toUpperCase());
             logDebug("Ignore block: " + s.toUpperCase());
         }
+        breakMsg = ChatColor.translateAlternateColorCodes('&', getConfig().getString("custom-messages.break"));
+        placeMsg = ChatColor.translateAlternateColorCodes('&', getConfig().getString("custom-messages.place"));        
     }
 
     private void createConfig() {

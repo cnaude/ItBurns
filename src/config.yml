@@ -6,3 +6,6 @@ burn-events:
 ignore-blocks: false
 ignore-list:
   - LONG_GRASS
+custom-messages:
+  break: ''
+  place: ''
