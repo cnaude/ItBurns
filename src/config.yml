@@ -1,2 +1,8 @@
 burn-duration: 100
 debug-enabled: false
+burn-events:
+  break: true
+  place: false
+ignore-blocks: false
+ignore-list:
+  - LONG_GRASS

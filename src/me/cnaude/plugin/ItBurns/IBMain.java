@@ -5,9 +5,12 @@
 package me.cnaude.plugin.ItBurns;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -29,6 +33,10 @@ public class IBMain extends JavaPlugin implements Listener {
     private File configFile;
     private int burnDuration = 100;
     private static boolean debugEnabled = false;
+    private static boolean burnOnBreak = false;
+    private static boolean burnOnPlace = false;
+    private static boolean ignoreBlocks = false;
+    private List<String> ignoreList = new ArrayList<String>();
 
     @Override
     public void onEnable() {
@@ -45,18 +53,50 @@ public class IBMain extends JavaPlugin implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreakEvent(BlockBreakEvent event) {
-        logDebug("BlockBreakEvent caught");
-        Player player = event.getPlayer();
-        if (player != null) {
-            logDebug("BlockBreakEvent: Player is not null! E: "
-                    + event.isCancelled() + " P: "
-                    + player.hasPermission("itburns.burn"));
-            if (event.isCancelled() && player.hasPermission("itburns.burn")) {
-                logDebug("Burning player! " + player.getName());
-                player.setFireTicks(burnDuration);
+        logDebug("BlockBreakEvent caught: " + burnOnBreak);
+        Block block = event.getBlock();
+        if (ignoreBlocks) {
+            if (ignoreList.contains(String.valueOf(block.getTypeId()))) {
+                logDebug("Ignored: " + block.getTypeId());
+                return;
             }
-        } else {
-            logDebug("BlockBreakEvent: Player is null");
+            if (ignoreList.contains(block.getType().toString())) {
+                logDebug("Ignored: " + block.getType().toString());
+                return;
+            }
+        }
+        if (burnOnBreak) {
+            Player player = event.getPlayer();
+            if (player != null) {
+                logDebug("BlockBreakEvent: Player is not null! E: "
+                        + event.isCancelled() + " P: "
+                        + player.hasPermission("itburns.burn"));
+                if (event.isCancelled() && player.hasPermission("itburns.burn")) {
+                    logDebug("Burning player! " + player.getName());
+                    player.setFireTicks(burnDuration);
+                }
+            } else {
+                logDebug("BlockBreakEvent: Player is null");
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockPlaceEvent(BlockPlaceEvent event) {
+        logDebug("BlockPlaceEvent caught: " + burnOnPlace);
+        if (burnOnPlace) {
+            Player player = event.getPlayer();
+            if (player != null) {
+                logDebug("BlockPlaceEvent: Player is not null! E: "
+                        + event.isCancelled() + " P: "
+                        + player.hasPermission("itburns.burn"));
+                if (event.isCancelled() && player.hasPermission("itburns.burn")) {
+                    logDebug("Burning player! " + player.getName());
+                    player.setFireTicks(burnDuration);
+                }
+            } else {
+                logDebug("BlockBreakEvent: Player is null");
+            }
         }
     }
 
@@ -81,6 +121,13 @@ public class IBMain extends JavaPlugin implements Listener {
     private void loadConfig() {
         burnDuration = getConfig().getInt("burn-duration");
         debugEnabled = getConfig().getBoolean("debug-enabled");
+        burnOnBreak = getConfig().getBoolean("burn-events.break");
+        burnOnPlace = getConfig().getBoolean("burn-events.place");
+        ignoreBlocks = getConfig().getBoolean("ignore-blocks");
+        for (String s : getConfig().getStringList("ignore-list")) {
+            ignoreList.add(s.toUpperCase());
+            logDebug("Ignore block: " + s.toUpperCase());
+        }
     }
 
     private void createConfig() {
